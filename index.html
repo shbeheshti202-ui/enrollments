@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سامانه ثبت اطلاعات داوطلبین دکتر هاشمی</title>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2980b9;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Tahoma', 'Arial', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        
+        header h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        
+        header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .form-container {
+            padding: 30px;
+        }
+        
+        .form-section {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .section-title {
+            color: var(--secondary-color);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--light-color);
+            font-size: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: var(--dark-color);
+        }
+        
+        .required::after {
+            content: " *";
+            color: var(--accent-color);
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            transition: border 0.3s;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+        
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .checkbox-item input {
+            width: auto;
+        }
+        
+        .radio-group {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .radio-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .radio-item input {
+            width: auto;
+        }
+        
+        .file-upload {
+            border: 2px dashed #ddd;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: border 0.3s;
+        }
+        
+        .file-upload:hover {
+            border-color: var(--primary-color);
+        }
+        
+        .file-upload input {
+            display: none;
+        }
+        
+        .file-upload-label {
+            display: block;
+            color: var(--primary-color);
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .terms-container {
+            background-color: #f9f9f9;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+        
+        .terms-item {
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .terms-checkbox {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .terms-checkbox input {
+            width: auto;
+            margin-top: 5px;
+        }
+        
+        .terms-text {
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .submit-btn {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 15px 30px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+        
+        .submit-btn:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .error {
+            color: var(--accent-color);
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .success-message {
+            background-color: var(--success-color);
+            color: white;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            text-align: center;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .loading-spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid var(--primary-color);
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @media (max-width: 768px) {
+            .form-container {
+                padding: 20px;
+            }
+            
+            .radio-group, .checkbox-group {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>سامانه ثبت اطلاعات داوطلبین دکتر هاشمی</h1>
+            <p>فرم جامع ثبت نام و اطلاعات دانش آموزان</p>
+        </header>
+        
+        <div class="form-container">
+            <form id="registrationForm">
+                <!-- بخش 1: اطلاعات هویتی و فردی -->
+                <div class="form-section">
+                    <h2 class="section-title">اطلاعات هویتی و فردی</h2>
+                    
+                    <div class="form-group">
+                        <label for="fullName" class="required">نام و نام خانوادگی</label>
+                        <input type="text" id="fullName" name="fullName" required>
+                        <div class="error" id="fullNameError">لطفاً نام و نام خانوادگی خود را وارد کنید</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="nationalCode" class="required">کد ملی</label>
+                        <input type="text" id="nationalCode" name="nationalCode" maxlength="10" required>
+                        <div class="error" id="nationalCodeError">لطفاً کد ملی معتبر وارد کنید</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="birthDate">تاریخ تولد</label>
+                        <input type="date" id="birthDate" name="birthDate">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="birthPlace">محل تولد</label>
+                        <input type="text" id="birthPlace" name="birthPlace">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="gender">جنسیت</label>
+                        <div class="radio-group">
+                            <div class="radio-item">
+                                <input type="radio" id="male" name="gender" value="مرد">
+                                <label for="male">مرد</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="female" name="gender" value="زن">
+                                <label for="female">زن</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="maritalStatus">وضعیت تاهل</label>
+                        <select id="maritalStatus" name="maritalStatus">
+                            <option value="">انتخاب کنید</option>
+                            <option value="مجرد">مجرد</option>
+                            <option value="متاهل">متاهل</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="nationality">ملیت</label>
+                        <input type="text" id="nationality" name="nationality" value="ایرانی">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="personalPhoto">عکس پرسنلی</label>
+                        <div class="file-upload" id="photoUploadArea">
+                            <input type="file" id="personalPhoto" name="personalPhoto" accept="image/*">
+                            <label for="personalPhoto" class="file-upload-label">برای آپلود عکس کلیک کنید</label>
+                            <p>فرمت‌های مجاز: JPG, PNG (حداکثر 2MB)</p>
+                        </div>
+                        <div id="photoPreview"></div>
+                    </div>
+                </div>
+                
+                <!-- بخش 2: اطلاعات تماس -->
+                <div class="form-section">
+                    <h2 class="section-title">اطلاعات تماس</h2>
+                    
+                    <div class="form-group">
+                        <label for="mobile" class="required">شماره تلفن همراه</label>
+                        <input type="tel" id="mobile" name="mobile" required>
+                        <div class="error" id="mobileError">لطفاً شماره تلفن همراه معتبر وارد کنید</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email" class="required">آدرس ایمیل</label>
+                        <input type="email" id="email" name="email" required>
+                        <div class="error" id="emailError">لطفاً آدرس ایمیل معتبر وارد کنید</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="phone">تلفن ثابت (با کد شهر)</label>
+                        <input type="tel" id="phone" name="phone">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="address">آدرس محل سکونت</label>
+                        <textarea id="address" name="address" rows="3"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="postalAddress">آدرس پستی برای ارسال مدارک (در صورت متفاوت بودن)</label>
+                        <textarea id="postalAddress" name="postalAddress" rows="3"></textarea>
+                    </div>
+                </div>
+                
+                <!-- بخش 3: اطلاعات آموزشی و سوابق تحصیلی -->
+                <div class="form-section">
+                    <h2 class="section-title">اطلاعات آموزشی و سوابق تحصیلی</h2>
+                    
+                    <div class="form-group">
+                        <label for="field">رشته تحصیلی دبیرستان</label>
+                        <select id="field" name="field">
+                            <option value="">انتخاب کنید</option>
+                            <option value="تجربی">تجربی</option>
+                            <option value="ریاضی">ریاضی</option>
+                            <option value="انسانی">انسانی</option>
+                            <option value="هنر">هنر</option>
+                            <option value="فنی">فنی</option>
+                            <option value="کاردانش">کاردانش</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="schoolName">نام دبیرستان</label>
+                        <input type="text" id="schoolName" name="schoolName">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="grade">پایه تحصیلی</label>
+                        <select id="grade" name="grade">
+                            <option value="">انتخاب کنید</option>
+                            <option value="دهم">دهم</option>
+                            <option value="یازدهم">یازدهم</option>
+                            <option value="دوازدهم">دوازدهم</option>
+                            <option value="فارغ التحصیل">فارغ التحصیل</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- بخش 4: اطلاعات دوره آموزشی -->
+                <div class="form-section">
+                    <h2 class="section-title">اطلاعات دوره آموزشی</h2>
+                    
+                    <div class="form-group">
+                        <label for="course">نام دوره</label>
+                        <div class="checkbox-group">
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="course1" name="course" value="کلاس های موسسه">
+                                <label for="course1">کلاس های موسسه</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="course2" name="course" value="پانسیون مطالعاتی">
+                                <label for="course2">پانسیون مطالعاتی</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" id="course3" name="course" value="مشاوره تحصیلی">
+                                <label for="course3">مشاوره تحصیلی</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="classType">نوع کلاس</label>
+                        <div class="radio-group">
+                            <div class="radio-item">
+                                <input type="radio" id="inPerson" name="classType" value="حضوری">
+                                <label for="inPerson">حضوری</label>
+                            </div>
+                            <div class="radio-item">
+                                <input type="radio" id="online" name="classType" value="آنلاین">
+                                <label for="online">آنلاین</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- بخش 5: سایر اطلاعات -->
+                <div class="form-section">
+                    <h2 class="section-title">سایر اطلاعات</h2>
+                    
+                    <div class="form-group">
+                        <label for="source">منبع آشنا شدن با موسسه</label>
+                        <select id="source" name="source">
+                            <option value="">انتخاب کنید</option>
+                            <option value="اینستاگرام">اینستاگرام</option>
+                            <option value="دوستان">دوستان</option>
+                            <option value="تبلیغات محیطی">تبلیغات محیطی</option>
+                            <option value="گوگل">گوگل</option>
+                            <option value="سایر">سایر</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="acquaintance">نحوه آشنایی با موسسه</label>
+                        <textarea id="acquaintance" name="acquaintance" rows="2"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="expectations">هدف از ثبت‌نام و انتظارات از دوره</label>
+                        <textarea id="expectations" name="expectations" rows="3"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="extracurricular">آیا کلاس های ورزشی یا فوق برنامه خاصی شرکت میکنید؟ کامل شرح دهید.</label>
+                        <textarea id="extracurricular" name="extracurricular" rows="3"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="comments">توضیحات و درخواست‌های ویژه</label>
+                        <textarea id="comments" name="comments" rows="3"></textarea>
+                    </div>
+                </div>
+                
+                <!-- بخش 6: توافقات و قوانین موسسه -->
+                <div class="form-section">
+                    <h2 class="section-title">توافقات و قوانین موسسه</h2>
+                    
+                    <div class="terms-container">
+                        <div class="terms-item">
+                            <div class="terms-checkbox">
+                                <input type="checkbox" id="term1" name="terms" value="قوانین عمومی" required>
+                                <label for="term1" class="required">قوانین و مقررات عمومی</label>
+                            </div>
+                            <div class="terms-text">
+                                من قوانین را مطالعه و «آیین‌نامه انضباطی و آموزشی» موسسه را کامل خوانده و می‌پذیرم که کلیه تصمیمات مربوط به برگزاری کلاس ها، امتحانات، قوانین حضور و غیاب و شرایط انصراف مطابق با مقررات داخلی موسسه خواهد بود.
+                            </div>
+                        </div>
+                        
+                        <div class="terms-item">
+                            <div class="terms-checkbox">
+                                <input type="checkbox" id="term2" name="terms" value="صحت اطلاعات" required>
+                                <label for="term2" class="required">صحت اطلاعات</label>
+                            </div>
+                            <div class="terms-text">
+                                من متعهد می‌شوم که کلیه اطلاعات ارائه شده در این فرم صحیح و کامل است. هرگونه تخلف و ارائه اطلاعات نادرست، می‌تواند منجر به ابطال ثبت‌نام من شود و موسسه هیچ گونه مسئولیتی در قبال عواقب آن نخواهد داشت.
+                            </div>
+                        </div>
+                        
+                        <div class="terms-item">
+                            <div class="terms-checkbox">
+                                <input type="checkbox" id="term3" name="terms" value="شرایط انصراف" required>
+                                <label for="term3" class="required">شرایط انصراف و عودت شهریه</label>
+                            </div>
+                            <div class="terms-text">
+                                <ul>
+                                    <li>من واقفم که در صورت انصراف تا 10 روز قبل از شروع دوره، ۸۰٪ از شهریه عودت داده می‌شود.</li>
+                                    <li>من می‌پذیرم که در صورت انصراف پس از شروع دوره، هیچ مبلغی از شهریه باقی‌مانده از کلاس‌های برگزار نشده عودت داده می‌شود و هزینه‌های اداری و منابع آموزشی کسر خواهد شد.</li>
+                                    <li>من می‌پذیرم که در صورت انصراف پس از گذشتن نیمی از دوره، هیچ مبلغی عودت داده نمی‌شود.</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="terms-item">
+                            <div class="terms-checkbox">
+                                <input type="checkbox" id="term4" name="terms" value="جابجایی کلاس" required>
+                                <label for="term4" class="required">شرایط جابجایی و انتقال کلاس</label>
+                            </div>
+                            <div class="terms-text">
+                                من می‌پذیرم که هرگونه درخواست برای جابجایی زمان یا روز کلاس، منوط به موافقت کتبی مدیریت موسسه و وجود ظرفیت خالی در کلاس دیگر است و ممکن است شامل هزینه اداری باشد.
+                            </div>
+                        </div>
+                        
+                        <div class="terms-item">
+                            <div class="terms-checkbox">
+                                <input type="checkbox" id="term5" name="terms" value="حضور و غیاب" required>
+                                <label for="term5" class="required">غیبت و قوانین حضور و غیاب</label>
+                            </div>
+                            <div class="terms-text">
+                                <ul>
+                                    <li>من می‌پذیرم که غیبت بیش از ۳ جلسه در یک ترم، می‌تواند منجر به محرومیت من از شرکت در امتحان پایان ترم شود و مسئولیت این امر به عهده خود من است.</li>
+                                    <li>من واقفم که به دلیل غیبت، هیچ‌گونه جلسه جبرانی یا عودت شهریه انجام نخواهد شد.</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="terms-item">
+                            <div class="terms-checkbox">
+                                <input type="checkbox" id="term6" name="terms" value="مالکیت معنوی" required>
+                                <label for="term6" class="required">مالکیت معنوی و محتوای آموزشی</label>
+                            </div>
+                            <div class="terms-text">
+                                من متعهد می‌شوم که کلیه محتوای آموزشی (کتاب‌ها، جزوات، فیلم‌ها، نرم‌افزارها) که توسط موسسه ارائه می‌شود، دارای حق کپی‌رایت است و از تکثیر، توزیع یا انتشار آن‌ها بدون اجازه کتبی موسسه خودداری خواهم کرد.
+                            </div>
+                        </div>
+                        
+                        <div class="terms-item">
+                            <div class="terms-checkbox">
+                                <input type="checkbox" id="term7" name="terms" value="حریم خصوصی" required>
+                                <label for="term7" class="required">حریم خصوصی و استفاده از اطلاعات</label>
+                            </div>
+                            <div class="terms-text">
+                                <ul>
+                                    <li>من موافقت می‌کنم که موسسه مجاز است از اطلاعات شخصی من فقط برای اهداف اداری، آموزشی، ارسال اطلاعیه‌ها و گزارش‌های درون‌سازمانی استفاده کند.</li>
+                                    <li>من می‌پذیرم که موسسه متعهد به حفظ محرمانگی اطلاعات من است و آن را در اختیار اشخاص ثالث بدون رضایت من قرار نمی‌دهد، مگر به موجب قانون.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="error" id="termsError">لطفاً تمامی شرایط و قوانین را مطالعه و تأیید کنید</div>
+                </div>
+                
+                <button type="submit" class="submit-btn">ثبت نام و ارسال اطلاعات</button>
+                
+                <div class="loading" id="loadingIndicator">
+                    <div class="loading-spinner"></div>
+                    <p>در حال ارسال اطلاعات، لطفاً منتظر بمانید...</p>
+                </div>
+                
+                <div class="success-message" id="successMessage">
+                    اطلاعات شما با موفقیت ثبت شد. به زودی با شما تماس خواهیم گرفت.
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // راه اندازی EmailJS با اطلاعات واقعی شما
+        emailjs.init("Yo4lcLfa2cX7Gcj29");
+        
+        document.getElementById('registrationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // اعتبارسنجی فرم
+            if (!validateForm()) {
+                return;
+            }
+            
+            // نمایش نشانگر بارگذاری
+            document.getElementById('loadingIndicator').style.display = 'block';
+            document.querySelector('.submit-btn').disabled = true;
+            
+            // جمع آوری داده‌های فرم
+            const formData = new FormData(this);
+            
+            // ایجاد شیء داده‌ها برای EmailJS
+            const templateParams = {
+                fullName: formData.get('fullName'),
+                nationalCode: formData.get('nationalCode'),
+                birthDate: formData.get('birthDate') || 'ثبت نشده',
+                birthPlace: formData.get('birthPlace') || 'ثبت نشده',
+                gender: formData.get('gender') || 'ثبت نشده',
+                maritalStatus: formData.get('maritalStatus') || 'ثبت نشده',
+                nationality: formData.get('nationality') || 'ایرانی',
+                mobile: formData.get('mobile'),
+                email: formData.get('email'),
+                phone: formData.get('phone') || 'ثبت نشده',
+                address: formData.get('address') || 'ثبت نشده',
+                postalAddress: formData.get('postalAddress') || 'ثبت نشده',
+                field: formData.get('field') || 'ثبت نشده',
+                schoolName: formData.get('schoolName') || 'ثبت نشده',
+                grade: formData.get('grade') || 'ثبت نشده',
+                course: Array.from(formData.getAll('course')).join(', ') || 'ثبت نشده',
+                classType: formData.get('classType') || 'ثبت نشده',
+                source: formData.get('source') || 'ثبت نشده',
+                acquaintance: formData.get('acquaintance') || 'ثبت نشده',
+                expectations: formData.get('expectations') || 'ثبت نشده',
+                extracurricular: formData.get('extracurricular') || 'ثبت نشده',
+                comments: formData.get('comments') || 'ثبت نشده',
+                terms: Array.from(formData.getAll('terms')).join(', '),
+                submissionDate: new Date().toLocaleString('fa-IR'),
+                personalPhoto: formData.get('personalPhoto') && formData.get('personalPhoto').size > 0 ? 
+                              '✅ عکس پرسنلی آپلود شده' : '❌ عکس پرسنلی آپلود نشده'
+            };
+
+            // گرفتن فایل عکس
+            const personalPhotoFile = formData.get('personalPhoto');
+            
+            // اگر فایل عکس وجود دارد، با فایل ارسال کن
+            if (personalPhotoFile && personalPhotoFile.size > 0) {
+                // ایجاد FormData جدید برای ارسال فایل
+                const emailFormData = new FormData();
+                emailFormData.append('service_id', 'enrollment');
+                emailFormData.append('template_id', 'template_e3q538y');
+                emailFormData.append('user_id', 'Yo4lcLfa2cX7Gcj29');
+                
+                // اضافه کردن پارامترها به صورت JSON
+                emailFormData.append('template_params', JSON.stringify(templateParams));
+                
+                // اضافه کردن فایل عکس
+                emailFormData.append('file', personalPhotoFile);
+                
+                console.log('در حال ارسال با فایل پیوست...');
+                
+                // ارسال با استفاده از fetch
+                fetch('https://api.emailjs.com/api/v1.0/email/send-form', {
+                    method: 'POST',
+                    body: emailFormData
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('خطا در ارسال ایمیل');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('ایمیل با موفقیت ارسال شد!', data);
+                    showSuccess();
+                })
+                .catch(error => {
+                    console.error('خطا در ارسال ایمیل:', error);
+                    // اگر ارسال با فایل شکست خورد، بدون فایل امتحان کن
+                    sendWithoutFile(templateParams);
+                });
+                
+            } else {
+                // اگر فایل عکس نیست، بدون فایل ارسال کن
+                sendWithoutFile(templateParams);
+            }
+        });
+
+        // تابع برای ارسال بدون فایل
+        function sendWithoutFile(templateParams) {
+            emailjs.send("enrollment", "template_e3q538y", templateParams)
+                .then(function(response) {
+                    console.log('ایمیل با موفقیت ارسال شد!', response.status, response.text);
+                    showSuccess();
+                }, function(error) {
+                    console.log('خطا در ارسال ایمیل:', error);
+                    showError();
+                });
+        }
+
+        // تابع نمایش موفقیت
+        function showSuccess() {
+            document.getElementById('loadingIndicator').style.display = 'none';
+            document.getElementById('successMessage').style.display = 'block';
+            document.getElementById('registrationForm').reset();
+            document.querySelector('.submit-btn').disabled = false;
+            document.getElementById('photoPreview').innerHTML = '';
+            
+            // پیمایش به بالا برای نمایش پیام موفقیت
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // تابع نمایش خطا
+        function showError() {
+            document.getElementById('loadingIndicator').style.display = 'none';
+            alert('خطا در ارسال اطلاعات. لطفاً دوباره تلاش کنید یا با پشتیبانی تماس بگیرید.');
+            document.querySelector('.submit-btn').disabled = false;
+        }
+
+        // اعتبارسنجی فرم
+        function validateForm() {
+            let isValid = true;
+            
+            // اعتبارسنجی نام کامل
+            const fullName = document.getElementById('fullName').value.trim();
+            if (fullName === '') {
+                document.getElementById('fullNameError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('fullNameError').style.display = 'none';
+            }
+            
+            // اعتبارسنجی کد ملی
+            const nationalCode = document.getElementById('nationalCode').value.trim();
+            if (nationalCode === '' || !isValidNationalCode(nationalCode)) {
+                document.getElementById('nationalCodeError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('nationalCodeError').style.display = 'none';
+            }
+            
+            // اعتبارسنجی موبایل
+            const mobile = document.getElementById('mobile').value.trim();
+            if (mobile === '' || !isValidMobile(mobile)) {
+                document.getElementById('mobileError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('mobileError').style.display = 'none';
+            }
+            
+            // اعتبارسنجی ایمیل
+            const email = document.getElementById('email').value.trim();
+            if (email === '' || !isValidEmail(email)) {
+                document.getElementById('emailError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('emailError').style.display = 'none';
+            }
+            
+            // اعتبارسنجی شرایط و قوانین
+            const terms = document.querySelectorAll('input[name="terms"]:checked');
+            if (terms.length !== 7) {
+                document.getElementById('termsError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('termsError').style.display = 'none';
+            }
+            
+            return isValid;
+        }
+
+        // اعتبارسنجی کد ملی
+        function isValidNationalCode(code) {
+            if (code.length !== 10 || /(\d)(\1){9}/.test(code)) return false;
+            
+            let sum = 0;
+            for (let i = 0; i < 9; i++) {
+                sum += parseInt(code.charAt(i)) * (10 - i);
+            }
+            
+            let remainder = sum % 11;
+            let controlDigit = parseInt(code.charAt(9));
+            
+            return (remainder < 2 && controlDigit === remainder) || 
+                   (remainder >= 2 && controlDigit === 11 - remainder);
+        }
+
+        // اعتبارسنجی موبایل
+        function isValidMobile(mobile) {
+            const mobileRegex = /^09[0-9]{9}$/;
+            return mobileRegex.test(mobile);
+        }
+
+        // اعتبارسنجی ایمیل
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        // پیش‌نمایش عکس آپلود شده
+        document.getElementById('personalPhoto').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const preview = document.getElementById('photoPreview');
+            
+            if (file) {
+                if (file.size > 2 * 1024 * 1024) {
+                    alert('حجم فایل باید کمتر از 2MB باشد.');
+                    this.value = '';
+                    return;
+                }
+                
+                if (!file.type.match('image.*')) {
+                    alert('لطفاً فقط فایل تصویر آپلود کنید.');
+                    this.value = '';
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.innerHTML = `
+                        <div style="margin-top: 10px; text-align: center;">
+                            <img src="${e.target.result}" alt="پیش‌نمایش عکس" style="max-width: 200px; border-radius: 5px; border: 2px solid #3498db;">
+                            <p style="margin-top: 5px; color: #27ae60; font-size: 14px;">✅ فایل با موفقیت انتخاب شد</p>
+                        </div>
+                    `;
+                };
+                reader.readAsDataURL(file);
+            } else {
+                preview.innerHTML = '';
+            }
+        });
+
+        // امکان کشیدن و رها کردن فایل برای آپلود
+        const photoUploadArea = document.getElementById('photoUploadArea');
+
+        photoUploadArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            this.style.borderColor = '#3498db';
+            this.style.backgroundColor = '#f8f9fa';
+        });
+
+        photoUploadArea.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            this.style.borderColor = '#ddd';
+            this.style.backgroundColor = '';
+        });
+
+        photoUploadArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            this.style.borderColor = '#ddd';
+            this.style.backgroundColor = '';
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                document.getElementById('personalPhoto').files = files;
+                
+                // ایجاد رویداد change برای فعال کردن پیش‌نمایش
+                const event = new Event('change');
+                document.getElementById('personalPhoto').dispatchEvent(event);
+            }
+        });
+    </script>
+</body>
+</html>
